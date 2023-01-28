@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="//unpkg.com/alpinejs" defer></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <title>Document</title>
         <style>
             .active {
@@ -11,23 +12,46 @@
         </style>
     </head>
 
-    <body>
-        <div x-data="{ currentTab: 'first' }">
-            <button @click="currentTab = 'first'" :class="{'active': currentTab === 'first'}">First</button>
-            <button @click="currentTab = 'second'" :class="{'active' : currentTab === 'second'}">Second</button>
-            <button @click="currentTab = 'third'" :class="{'active' : currentTab === 'third'}">Third</button>
+    <body class="p-10 max-w-lg mx-auto">
+        <form
+            x-data="{
+                form: {
+                    name: 'John Smith'
+                },
 
-            <div style="border: 1px dotted gray; padding: 1rem; margin-top: 1rem">
-                <div x-show="currentTab === 'first'">
-                    <p>First tab.</p>
-                </div>
-                <div x-show="currentTab === 'second'">
-                    <p>Second tab.</p>
-                </div>
-                <div x-show="currentTab === 'third'">
-                    <p>Third tab.</p>
-                </div>
+                user: null,
+
+                submit() {
+                    fetch('https://reqres.in/api/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.form)
+                    })
+                    .then(response => response.json())
+                    .then(user => this.user = user)
+                }
+            }"
+            @submit.prevent="submit"
+        >
+            <div class="mb-6">
+                <label  class="block mb-2 uppercase font-bold text-xs text-gray-700"
+                        for="name"
+                >
+                    Name
+                </label>
+
+                <input  class="border border-gray-400 p-2 w-full"
+                        type="text"
+                        name="name"
+                        id="name"
+                        x-model:="form.name"
+                        required
+                >
             </div>
-        </div>
+
+            <template x-if="user">
+                <div x-text="'The user ' + user.name + ' was created at ' + user.createdAt"></div>
+            </template>
+        </form>
     </body>
 </html>
