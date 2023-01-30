@@ -4,54 +4,32 @@
         <meta charset="utf-8">
         <script src="//unpkg.com/alpinejs" defer></script>
         <script src="https://cdn.tailwindcss.com"></script>
-        <title>Document</title>
-        <style>
-            .active {
-                color: red;
-            }
-        </style>
+        <script src="/js/app.js"></script>
+        <title>Alpine Examples</title>
     </head>
 
     <body class="p-10 max-w-lg mx-auto">
-        <form
-            x-data="{
-                form: {
-                    name: 'John Smith'
-                },
-
-                user: null,
-
-                submit() {
-                    fetch('https://reqres.in/api/users', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(this.form)
-                    })
-                    .then(response => response.json())
-                    .then(user => this.user = user)
-                }
-            }"
-            @submit.prevent="submit"
+        <div
+            class="bg-gray-300 px-10 py-6 rounded"
+            x-data="taskApp()"
         >
-            <div class="mb-6">
-                <label  class="block mb-2 uppercase font-bold text-xs text-gray-700"
-                        for="name"
+            <form @submit.prevent="submit">
+                <input
+                    type="text"
+                    placeholder="Go to the market..."
+                    x-model="newTask"
+                    class="w-full px-1"
                 >
-                    Name
-                </label>
+            </form>
 
-                <input  class="border border-gray-400 p-2 w-full"
-                        type="text"
-                        name="name"
-                        id="name"
-                        x-model:="form.name"
-                        required
-                >
-            </div>
-
-            <template x-if="user">
-                <div x-text="'The user ' + user.name + ' was created at ' + user.createdAt"></div>
-            </template>
-        </form>
+            <ul class="list-disc mt-3">
+                <template x-for="(task, index) in tasks" :key="index">
+                    <li>
+                        <input type="checkbox" x-model="task.completed">
+                        <span x-text="task.body" :class="{ 'line-through' : task.completed }"></span>
+                    </li>
+                </template>
+            </ul>
+        </div>
     </body>
 </html>
